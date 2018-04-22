@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -54,7 +55,7 @@ import java.util.Set;
 @ConditionalOnClass({ Servlet.class, DispatcherServlet.class, SpringTemplateEngine.class })
 @ConditionalOnMissingBean(value = ErrorController.class, search = SearchStrategy.CURRENT)
 @AutoConfigureBefore({ ErrorMvcAutoConfiguration.class, WebMvcAutoConfiguration.class })
-@AllArgsConstructor
+@AutoConfigureAfter({ PropertiesConfiguration.class })
 @Slf4j
 class BetterErrorPagesAutoconfigurer {
 
@@ -63,6 +64,12 @@ class BetterErrorPagesAutoconfigurer {
 	private final List<ErrorViewResolver> errorViewResolvers;
 
 	private final SpringTemplateEngine templateEngine;
+
+	public BetterErrorPagesAutoconfigurer(ServerProperties serverProperties, List<ErrorViewResolver> errorViewResolvers, SpringTemplateEngine templateEngine) {
+		this.serverProperties = serverProperties;
+		this.errorViewResolvers = errorViewResolvers;
+		this.templateEngine = templateEngine;
+	}
 
 	/**
 	 * <p>
